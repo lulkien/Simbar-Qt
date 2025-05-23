@@ -30,6 +30,9 @@ qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(simbar
     src/main.cpp
+    src/engine.cpp
+    src/bluetooth/controller.cpp
+    src/bluetooth/model.cpp
 )
 
 qt_add_qml_module(simbar

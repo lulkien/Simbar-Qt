@@ -1,18 +1,4 @@
 CompileFlags:
-  Add:
-    # Standard C++ and compiler flags
-    - -std=c++17
-    - -Wall
-    - -Wextra
-    - -fPIC
-    # Qt defines
-    - -DQT_CORE_LIB
-    - -DQT_GUI_LIB
-    - -DQT_WIDGETS_LIB
-    - -DQT_QUICK_LIB
-    - -DQT_QML_LIB
-    - -DQT_NO_DEBUG
-    - -DQT_QML_DEBUG
   Remove: -mno-direct-extern-access
   CompilationDatabase: build
 Index:

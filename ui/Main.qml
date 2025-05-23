@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Window
+import SimbarQt
 
 Item {
     id: root
@@ -9,5 +10,10 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "green"
+    }
+
+    Text {
+        anchors.centerIn: parent
+        text: BluetoothEnums.Error
     }
 }

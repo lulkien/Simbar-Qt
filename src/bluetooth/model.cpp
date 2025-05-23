@@ -1,11 +1,13 @@
 #include "model.h"
 #include <qobject.h>
 
-BluetoothModel::BluetoothModel(QObject* parent) : QObject(parent) {}
+namespace Bluetooth {
 
-BluetoothModel::~BluetoothModel() = default;
+Model::Model(QObject* parent) : QObject(parent) {}
 
-uint8_t BluetoothModel::setState(const uint8_t newState) {
+Model::~Model() = default;
+
+State Model::setState(const State newState) {
   if (newState == m_state) {
     return m_state;
   }
@@ -15,3 +17,5 @@ uint8_t BluetoothModel::setState(const uint8_t newState) {
 
   return m_state;
 }
+
+} // namespace Bluetooth

@@ -1,5 +1,4 @@
 #include "src/engine.h"
-#include "src/bluetooth/common.h"
 
 #include <LayerShellQt/window.h>
 #include <exception>
@@ -26,10 +25,6 @@ void ApplicationEngine::initialize() {
   qDebug() << "Expose C++ QObject to QML";
   m_view.rootContext()->setContextProperty("btModel",
                                            m_btController.getModel().get());
-
-  // qmlRegisterUncreatableType<BluetoothEnums>("BluetoothModule", 1, 0,
-  //                                            "BluetoothEnums",
-  //                                            "Uncreatable");
 }
 
 void ApplicationEngine::setupView() {

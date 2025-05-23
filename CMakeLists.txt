@@ -38,9 +38,15 @@ qt_add_executable(simbar
 qt_add_qml_module(simbar
     URI SimbarQt
     VERSION 1.0
+    SOURCES
+        src/bluetooth/common.h
     QML_FILES
         ui/Main.qml
         ui/components/KFrame.qml
+)
+
+target_include_directories(simbar PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/bluetooth
 )
 
 target_link_libraries(simbar PRIVATE

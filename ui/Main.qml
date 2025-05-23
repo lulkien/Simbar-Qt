@@ -12,9 +12,7 @@ Item {
         color: "blue"
     }
 
-    // Rectangle {
-    //     anchors.fill: parent
-    //     color: "green"
-    // }
-
+    Component.onCompleted: {
+        console.log(Bluetooth.Idle);
+    }
 }

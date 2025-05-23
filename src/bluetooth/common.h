@@ -4,12 +4,16 @@
 #include <qobject.h>
 #include <qobjectdefs.h>
 #include <qqmlintegration.h>
+#include <qtmetamacros.h>
 
-class BluetoothEnums : public QObject {
-  Q_OBJECT
-public:
-  enum class State : uint8_t {
-    Unknown = 0,
-  };
-  Q_ENUM(State)
+namespace Bluetooth {
+Q_NAMESPACE
+QML_ELEMENT
+
+enum class State : uint8_t {
+  Unknown = 0,
+  Idle,
 };
+Q_ENUM_NS(State)
+
+} // namespace Bluetooth

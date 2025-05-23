@@ -5,13 +5,19 @@
 
 #include "src/bluetooth/model.h"
 
-class BluetoothController : public QObject {
+namespace Bluetooth {
+
+class Controller : public QObject {
 public:
-  BluetoothController(QObject* parent = nullptr);
-  ~BluetoothController() override;
+  Controller(QObject* parent = nullptr);
+  ~Controller() override;
 
   [[nodiscard]] BluetoothModelRef getModel() const { return m_model; }
 
 private:
   BluetoothModelRef m_model;
 };
+
+} // namespace Bluetooth
+
+using BluetoothController = Bluetooth::Controller;

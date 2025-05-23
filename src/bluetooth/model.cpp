@@ -1,4 +1,4 @@
-#include "model.h"
+#include "bluetooth/model.h"
 #include <qobject.h>
 
 namespace Bluetooth {

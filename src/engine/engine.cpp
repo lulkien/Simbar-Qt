@@ -1,4 +1,4 @@
-#include "src/engine.h"
+#include "engine.h"
 
 #include <LayerShellQt/window.h>
 #include <exception>

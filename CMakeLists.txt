@@ -30,7 +30,7 @@ qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(simbar
     src/main.cpp
-    src/engine.cpp
+    src/engine/engine.cpp
     src/bluetooth/controller.cpp
     src/bluetooth/model.cpp
 )
@@ -46,6 +46,8 @@ qt_add_qml_module(simbar
 )
 
 target_include_directories(simbar PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bluetooth
 )
 

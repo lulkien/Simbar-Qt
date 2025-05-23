@@ -1,5 +1,5 @@
-#include "src/bluetooth/controller.h"
-#include "src/bluetooth/model.h"
+#include "bluetooth/controller.h"
+#include "bluetooth/model.h"
 
 #include <memory>
 #include <qobject.h>

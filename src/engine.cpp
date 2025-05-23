@@ -27,9 +27,9 @@ void ApplicationEngine::initialize() {
   m_view.rootContext()->setContextProperty("btModel",
                                            m_btController.getModel().get());
 
-  // qmlRegisterUncreatableMetaObject(Bluetooth::staticMetaObject,
-  //                                  "com.simbar.bluetooth", 1, 0, "Bluetooth",
-  //                                  "Error: only enums");
+  // qmlRegisterUncreatableType<BluetoothEnums>("BluetoothModule", 1, 0,
+  //                                            "BluetoothEnums",
+  //                                            "Uncreatable");
 }
 
 void ApplicationEngine::setupView() {

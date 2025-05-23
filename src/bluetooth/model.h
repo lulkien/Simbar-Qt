@@ -7,27 +7,22 @@
 
 #include "src/bluetooth/common.h"
 
-namespace Bluetooth {
-Q_NAMESPACE
-
-class Model : public QObject {
+class BluetoothModel : public QObject {
   Q_OBJECT
-  Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
+  Q_PROPERTY(uint8_t state READ state WRITE setState NOTIFY stateChanged)
 
 public:
-  explicit Model(QObject* parent = nullptr);
-  ~Model() override;
+  explicit BluetoothModel(QObject* parent = nullptr);
+  ~BluetoothModel() override;
 
-  [[nodiscard]] State state() const { return m_state; }
-  State setState(State newState);
+  [[nodiscard]] uint8_t state() const { return m_state; }
+  uint8_t setState(uint8_t newState);
 
 signals:
-  void stateChanged(State state);
+  void stateChanged(uint8_t state);
 
 private:
-  State m_state = State::Unknown;
+  uint8_t m_state = static_cast<uint8_t>(BluetoothEnums::State::Unknown);
 };
 
-using ModelRef = std::shared_ptr<Model>;
-
-} // namespace Bluetooth
+using BluetoothModelRef = std::shared_ptr<BluetoothModel>;

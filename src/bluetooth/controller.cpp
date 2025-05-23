@@ -4,12 +4,8 @@
 #include <memory>
 #include <qobject.h>
 
-namespace Bluetooth {
-
-Controller::Controller(QObject* parent) : QObject{parent} {
-  m_model = std::make_shared<Model>();
+BluetoothController::BluetoothController(QObject* parent) : QObject{parent} {
+  m_model = std::make_shared<BluetoothModel>();
 }
 
-Controller::~Controller() = default;
-
-} // namespace Bluetooth
+BluetoothController::~BluetoothController() = default;

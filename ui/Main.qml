@@ -7,13 +7,14 @@ Item {
     width: 3440
     height: 40
 
-    Rectangle {
+    KFrame {
         anchors.fill: parent
-        color: "green"
+        color: "blue"
     }
 
-    Text {
-        anchors.centerIn: parent
-        text: BluetoothEnums.Error
-    }
+    // Rectangle {
+    //     anchors.fill: parent
+    //     color: "green"
+    // }
+
 }

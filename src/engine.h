@@ -14,7 +14,7 @@ public:
   void showView();
 
 private:
-  Bluetooth::Controller m_btController;
+  BluetoothController m_btController;
 
   QQuickView m_view;
   LayerShellQt::Window* m_layerShell = nullptr;

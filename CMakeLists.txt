@@ -33,22 +33,26 @@ qt_add_executable(simbar
     src/engine/engine.cpp
     src/bluetooth/controller.cpp
     src/bluetooth/model.cpp
+    src/ui/flexrectangle.cpp
 )
 
 qt_add_qml_module(simbar
-    URI SimbarQt
+    URI Simbar
     VERSION 1.0
     SOURCES
         src/bluetooth/common.h
+        src/ui/flexrectangle.h
+        src/ui/flexrectangle.cpp
     QML_FILES
         ui/Main.qml
-        ui/components/KFrame.qml
+        ui/components/Widget.qml
 )
 
 target_include_directories(simbar PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bluetooth
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
 )
 
 target_link_libraries(simbar PRIVATE

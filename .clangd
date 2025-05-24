@@ -12,6 +12,7 @@ Diagnostics:
     Remove:
       - modernize-use-trailing-return-type
       - readability-magic-numbers
+      - readability-convert-member-functions-to-static
     CheckOptions:
       readability-identifier-naming.VariableCase: camelCase
       readability-identifier-naming.FunctionCase: camelCase

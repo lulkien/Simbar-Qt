@@ -1,18 +1,21 @@
 import QtQuick
-import QtQuick.Window
-import SimbarQt
+import QtQuick.Controls
+import Simbar
 
 Item {
     id: root
     width: 3440
     height: 40
 
-    KFrame {
+    Rectangle {
         anchors.fill: parent
-        color: "blue"
+        color: "#18181f"
     }
 
-    Component.onCompleted: {
-        console.log(Bluetooth.Idle);
+    Widget {
+        id: test
+        anchors.centerIn: parent
+        icon: "󰖩"
+        content: "Hehe"
     }
 }

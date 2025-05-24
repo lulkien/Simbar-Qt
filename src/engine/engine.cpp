@@ -29,7 +29,7 @@ void ApplicationEngine::initialize() {
 
 void ApplicationEngine::setupView() {
   qDebug() << "Setup view from module";
-  m_view.loadFromModule("SimbarQt", "Main");
+  m_view.loadFromModule("Simbar", "Main");
   m_view.setGeometry(0, 0, 3440, 40);
 }
 

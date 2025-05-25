@@ -13,6 +13,8 @@ Diagnostics:
       - modernize-use-trailing-return-type
       - readability-magic-numbers
       - readability-convert-member-functions-to-static
+      - readability-identifier-length
+      - readability-math-missing-parentheses
     CheckOptions:
       readability-identifier-naming.VariableCase: camelCase
       readability-identifier-naming.FunctionCase: camelCase

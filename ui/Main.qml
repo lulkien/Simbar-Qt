@@ -1,6 +1,5 @@
 import QtQuick
-import QtQuick.Controls
-import Simbar
+import Simbar as Simbar
 
 Item {
     id: root
@@ -12,10 +11,10 @@ Item {
         color: "#18181f"
     }
 
-    Widget {
-        id: test
+    Simbar.FlexRectangle {
+        id: flex
         anchors.centerIn: parent
-        icon: "󰖩"
-        content: "Hehe"
+        width: 100
+        height: 32
     }
 }

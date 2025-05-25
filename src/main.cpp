@@ -6,7 +6,7 @@
 int main(int argc, char* argv[]) {
   QGuiApplication app(argc, argv);
 
-  QQuickWindow::setGraphicsApi(QSGRendererInterface::Vulkan);
+  QQuickWindow::setGraphicsApi(QSGRendererInterface::VulkanRhi);
 
   ApplicationEngine engine;
 

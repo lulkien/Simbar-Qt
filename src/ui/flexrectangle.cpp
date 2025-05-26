@@ -140,7 +140,6 @@ QSGNode* FlexRectangleItem::updatePaintNode(QSGNode* oldNode,
 
 void FlexRectangleItem::generateGeometry(QSGGeometry* geometry,
                                          const CornerRadii& radii) const {
-  // TODO: implement this
   auto* vertices = geometry->vertexDataAsPoint2D();
 
   size_t vertex = 0;
@@ -150,36 +149,42 @@ void FlexRectangleItem::generateGeometry(QSGGeometry* geometry,
 
   // Calculate TopLeft vertices
   for (int i = 0; i <= 16; i++) {
-    double angle = i * (M_PI_2 / static_cast<double>(m_segments));
+    double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
 
-    double x = radii.topLeft * (1 - cos(angle));
-    double y = radii.topLeft * (1 - sin(angle));
+    double x = radii.topLeft * (1 - cos(alpha));
+    double y = radii.topLeft * (1 - sin(alpha));
 
     vertices[++vertex].set(x, y);
-
-    if (--repeat == 0) {
-      repeat = 1;
-      vertices[++vertex].set(x, y);
-      vertices[++vertex].set(width() / 2, height() / 2);
-    }
   }
 
   // Calculate TopRight vertices
   for (int i = 0; i <= 16; i++) {
-    // double angle = i * (M_PI_2 / static_cast<double>(m_segments));
-    //
-    // double x = width() - radii.topRight * (1 - sin(angle));
-    // double y = radii.topRight * (1 - cos(angle));
-    //
-    // vertices[++vertexIndex].set(x, y);
+    double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
+
+    double x = width() - radii.topRight * (1 - sin(alpha));
+    double y = radii.topRight * (1 - cos(alpha));
+
+    vertices[++vertex].set(x, y);
   }
 
   // Calculate BottomRight vertices
   for (int i = 0; i <= 16; i++) {
+    double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
+
+    double x = width() - radii.bottomRight * (1 - cos(alpha));
+    double y = height() - radii.bottomRight * (1 - sin(alpha));
+
+    vertices[++vertex].set(x, y);
   }
 
   // Calculate BottomLeft vertices
   for (int i = 0; i <= 16; i++) {
+    double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
+
+    double x = radii.bottomLeft * (1 - sin(alpha));
+    double y = height() - radii.bottomLeft * (1 - cos(alpha));
+
+    vertices[++vertex].set(x, y);
   }
 
   qDebug() << vertex;

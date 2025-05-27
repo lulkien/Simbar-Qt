@@ -12,9 +12,23 @@ Item {
     }
 
     Simbar.FlexRectangle {
-        id: flex
+        id: flex1
         anchors.centerIn: parent
-        width: 100
+        width: 32
         height: 32
+        radius: [8, 0, 0, 8]
+        segments: 8
+        color: "pink"
+    }
+
+    Simbar.FlexRectangle {
+        id: flex2
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: flex1.right
+        width: 50
+        height: 32
+        radius: [0, 8, 8, 0]
+        segments: 8
+        color: "#4c4c4c"
     }
 }

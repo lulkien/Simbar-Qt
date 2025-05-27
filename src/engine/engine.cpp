@@ -6,6 +6,8 @@
 #include <qlogging.h>
 #include <qqmlcontext.h>
 
+static const int MSAA_X8 = 8;
+
 ApplicationEngine::ApplicationEngine() = default;
 
 ApplicationEngine::~ApplicationEngine() = default;
@@ -25,6 +27,10 @@ void ApplicationEngine::initialize() {
   qDebug() << "Expose C++ QObject to QML";
   m_view.rootContext()->setContextProperty("btModel",
                                            m_btController.getModel().get());
+
+  QSurfaceFormat format = m_view.format();
+  format.setSamples(MSAA_X8);
+  m_view.setFormat(format);
 }
 
 void ApplicationEngine::setupView() {

@@ -3,15 +3,19 @@
 #include <QSGGeometry>
 #include <QSGVertexColorMaterial>
 #include <cmath>
+#include <cstdint>
+#include <cstring>
 #include <qcontainerfwd.h>
 #include <qlogging.h>
 #include <qminmax.h>
 #include <qsggeometry.h>
 #include <qtpreprocessorsupport.h>
 #include <qvariant.h>
+#include <vector>
 
-void FlexRectangleItem::CornerRadii::fromQVariantList(
-    const QVariantList& list) {
+namespace UI {
+
+void FlexRectangle::CornerRadii::fromQVariantList(const QVariantList& list) {
 
   topLeft = 0.0F;
   topRight = 0.0F;
@@ -22,37 +26,37 @@ void FlexRectangleItem::CornerRadii::fromQVariantList(
     return;
   }
 
-  auto toDouble = [](const QVariant& value) -> double {
+  auto toFloat = [](const QVariant& value) -> float {
     bool ok = false;
-    double ret = value.toDouble(&ok);
+    float ret = value.toFloat(&ok);
     return ok ? ret : 0.0F;
   };
 
   switch (list.size()) {
   case 1:
-    topLeft = toDouble(list.at(0));
+    topLeft = toFloat(list.at(0));
     break;
   case 2:
-    topLeft = toDouble(list.at(0));
-    topRight = toDouble(list.at(1));
+    topLeft = toFloat(list.at(0));
+    topRight = toFloat(list.at(1));
     break;
   case 3:
-    topLeft = toDouble(list.at(0));
-    topRight = toDouble(list.at(1));
-    bottomRight = toDouble(list.at(2));
+    topLeft = toFloat(list.at(0));
+    topRight = toFloat(list.at(1));
+    bottomRight = toFloat(list.at(2));
     break;
   default:
-    topLeft = toDouble(list.at(0));
-    topRight = toDouble(list.at(1));
-    bottomRight = toDouble(list.at(2));
-    bottomLeft = toDouble(list.at(3));
+    topLeft = toFloat(list.at(0));
+    topRight = toFloat(list.at(1));
+    bottomRight = toFloat(list.at(2));
+    bottomLeft = toFloat(list.at(3));
     break;
   }
 }
 
-void FlexRectangleItem::CornerRadii::clampRadius(const double& width,
-                                                 const double& height) {
-  double maxRadius = qMin(width / 2, height / 2);
+void FlexRectangle::CornerRadii::clampRadius(const float& width,
+                                             const float& height) {
+  float maxRadius = qMin(width / 2, height / 2);
 
   topLeft = qMax(0.0F, qMin(maxRadius, topLeft));
   topRight = qMax(0.0F, qMin(maxRadius, topRight));
@@ -62,11 +66,9 @@ void FlexRectangleItem::CornerRadii::clampRadius(const double& width,
 
 // ###################################################################################
 
-FlexRectangleItem::FlexRectangleItem(QQuickItem* parent) : QQuickItem(parent) {
-  setFlag(ItemHasContents, true);
-}
+FlexRectangle::FlexRectangle() { this->setFlag(ItemHasContents, true); }
 
-void FlexRectangleItem::setColor(const QColor& color) {
+void FlexRectangle::setColor(const QColor& color) {
   if (m_color == color) {
     return;
   }
@@ -75,25 +77,37 @@ void FlexRectangleItem::setColor(const QColor& color) {
   update();
 }
 
-void FlexRectangleItem::setRadius(const QVariantList& radius) {
+void FlexRectangle::setRadius(const QVariantList& radius) {
   if (m_radius == radius) {
     return;
   }
   m_radius = radius;
+
   while (m_radius.size() < 4) {
     m_radius.append(0);
   }
+
   m_geometryDirty = true;
   emit radiusChanged();
   update();
 }
 
-QSGNode* FlexRectangleItem::updatePaintNode(QSGNode* oldNode,
-                                            UpdatePaintNodeData* data) {
+void FlexRectangle::setSegments(uint32_t newSegments) {
+  if (m_segments == newSegments) {
+    return;
+  }
+  m_segments = newSegments;
+  m_geometryDirty = true;
+  emit segmentsChanged();
+  update();
+}
+
+QSGNode* FlexRectangle::updatePaintNode(QSGNode* oldNode,
+                                        UpdatePaintNodeData* data) {
   Q_UNUSED(data)
 
-  const double width = this->width();
-  const double height = this->height();
+  const float width = this->width();
+  const float height = this->height();
 
   if (width <= 0 || height <= 0) {
     delete oldNode;
@@ -109,17 +123,10 @@ QSGNode* FlexRectangleItem::updatePaintNode(QSGNode* oldNode,
     radii.fromQVariantList(m_radius);
     radii.clampRadius(width, height);
 
-    const int vertexCount = 5 * m_segments;
-
-    auto* geometry =
-        new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), vertexCount);
-
-    geometry->setDrawingMode(QSGGeometry::DrawTriangles);
+    auto* geometry = generateGeometry(radii);
 
     node->setGeometry(geometry);
     node->setFlag(QSGNode::OwnsGeometry);
-
-    generateGeometry(geometry, radii);
 
     auto* material = new QSGFlatColorMaterial;
     material->setColor(m_color);
@@ -138,60 +145,73 @@ QSGNode* FlexRectangleItem::updatePaintNode(QSGNode* oldNode,
   return node;
 }
 
-void FlexRectangleItem::generateGeometry(QSGGeometry* geometry,
-                                         const CornerRadii& radii) const {
-  auto* vertices = geometry->vertexDataAsPoint2D();
+QSGGeometry* FlexRectangle::generateGeometry(const CornerRadii& radii) const {
+  using Point2D = QSGGeometry::Point2D;
 
-  size_t vertex = 0;
-  size_t repeat = 2;
+  const auto width = static_cast<float>(this->width());
+  const auto height = static_cast<float>(this->height());
 
-  vertices[vertex].set(width() / 2, height() / 2);
+  std::vector<QSGGeometry::Point2D> vertexVec;
+  vertexVec.reserve(8 * m_segments);
 
-  // Calculate TopLeft vertices
-  for (int i = 0; i <= 16; i++) {
+  for (int i = 0; i <= m_segments; i++) {
     double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
 
-    double x = radii.topLeft * (1 - cos(alpha));
-    double y = radii.topLeft * (1 - sin(alpha));
+    float x = radii.topLeft * (1 - cos(alpha));
+    float y = radii.topLeft * (1 - sin(alpha));
 
-    vertices[++vertex].set(x, y);
+    vertexVec.push_back(Point2D{.x = width / 2, .y = height / 2});
+    vertexVec.push_back(Point2D({.x = x, .y = y}));
   }
 
   // Calculate TopRight vertices
-  for (int i = 0; i <= 16; i++) {
+  for (int i = 0; i <= m_segments; i++) {
     double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
 
-    double x = width() - radii.topRight * (1 - sin(alpha));
-    double y = radii.topRight * (1 - cos(alpha));
+    float x = width - radii.topRight * (1 - sin(alpha));
+    float y = radii.topRight * (1 - cos(alpha));
 
-    vertices[++vertex].set(x, y);
+    vertexVec.push_back(Point2D{.x = width / 2, .y = height / 2});
+    vertexVec.push_back(Point2D({.x = x, .y = y}));
   }
 
   // Calculate BottomRight vertices
-  for (int i = 0; i <= 16; i++) {
+  for (int i = 0; i <= m_segments; i++) {
     double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
 
-    double x = width() - radii.bottomRight * (1 - cos(alpha));
-    double y = height() - radii.bottomRight * (1 - sin(alpha));
+    float x = width - radii.bottomRight * (1 - cos(alpha));
+    float y = height - radii.bottomRight * (1 - sin(alpha));
 
-    vertices[++vertex].set(x, y);
+    vertexVec.push_back(Point2D{.x = width / 2, .y = height / 2});
+    vertexVec.push_back(Point2D({.x = x, .y = y}));
   }
 
   // Calculate BottomLeft vertices
-  for (int i = 0; i <= 16; i++) {
+  for (int i = 0; i <= m_segments; i++) {
     double alpha = i * (M_PI_2 / static_cast<double>(m_segments));
 
-    double x = radii.bottomLeft * (1 - sin(alpha));
-    double y = height() - radii.bottomLeft * (1 - cos(alpha));
+    float x = radii.bottomLeft * (1 - sin(alpha));
+    float y = height - radii.bottomLeft * (1 - cos(alpha));
 
-    vertices[++vertex].set(x, y);
+    vertexVec.push_back(Point2D{.x = width / 2, .y = height / 2});
+    vertexVec.push_back(Point2D({.x = x, .y = y}));
   }
 
-  qDebug() << vertex;
-  /*
-    code
-  */
+  if (vertexVec.size() > 2) {
+    vertexVec.push_back(vertexVec.at(1));
+  }
 
-  // Last vertice to close loop
-  // vertices[vertexIndex].set(vertices[1].x, vertices[1].y);
+  auto* geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(),
+                                   vertexVec.size());
+
+  geometry->setDrawingMode(QSGGeometry::DrawTriangleStrip);
+
+  auto* vertices = geometry->vertexDataAsPoint2D();
+
+  memcpy(vertices, vertexVec.data(),
+         vertexVec.size() * sizeof(QSGGeometry::Point2D));
+
+  return geometry;
 }
+
+} // namespace UI

@@ -1,34 +1,21 @@
 import QtQuick
-import Simbar as Simbar
+import Simbar
 
 Item {
     id: root
-    width: 3440
-    height: 40
+    width: Global.Size.barWidth
+    height: Global.Size.barHeight
 
     Rectangle {
         anchors.fill: parent
-        color: "#18181f"
+        color: Global.Color.background
     }
 
-    Simbar.FlexRectangle {
-        id: flex1
-        anchors.centerIn: parent
-        width: 32
-        height: 32
-        radius: [8, 0, 0, 8]
-        segments: 8
-        color: "pink"
-    }
-
-    Simbar.FlexRectangle {
-        id: flex2
+    RightRegion {
+        id: right_widgets
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: flex1.right
-        width: 50
-        height: 32
-        radius: [0, 8, 8, 0]
-        segments: 8
-        color: "#4c4c4c"
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+
     }
 }

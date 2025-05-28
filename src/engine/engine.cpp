@@ -1,10 +1,12 @@
 #include "engine.h"
+#include "config.h"
 
-#include <LayerShellQt/window.h>
 #include <exception>
 #include <qdebug.h>
 #include <qlogging.h>
 #include <qqmlcontext.h>
+
+#include <LayerShellQt/window.h>
 
 static const int MSAA_X8 = 8;
 
@@ -22,7 +24,7 @@ void ApplicationEngine::initialize() {
   m_layerShell->setAnchors(LayerShellQt::Window::AnchorTop);
   m_layerShell->setKeyboardInteractivity(
       LayerShellQt::Window::KeyboardInteractivityNone);
-  m_layerShell->setExclusiveZone(40);
+  m_layerShell->setExclusiveZone(BAR_HEIGHT);
 
   qDebug() << "Expose C++ QObject to QML";
   m_view.rootContext()->setContextProperty("btModel",
@@ -36,7 +38,7 @@ void ApplicationEngine::initialize() {
 void ApplicationEngine::setupView() {
   qDebug() << "Setup view from module";
   m_view.loadFromModule("Simbar", "Main");
-  m_view.setGeometry(0, 0, 3440, 40);
+  m_view.setGeometry(BAR_X_POSITION, BAR_Y_POSITION, BAR_WIDTH, BAR_HEIGHT);
 }
 
 void ApplicationEngine::showView() {

@@ -15,6 +15,15 @@
 
 namespace UI {
 
+/**
+ * @brief Converts a QVariantList to CornerRadii values.
+ *
+ * Sets the topLeft, topRight, bottomRight, and bottomLeft radii from a QVariantList.
+ * If the list has fewer than 4 elements, remaining radii are set to 0.
+ * Uses a lambda to safely convert QVariant values to floats.
+ *
+ * @param list The QVariantList containing radius values.
+ */
 void FlexRectangle::CornerRadii::fromQVariantList(const QVariantList& list) {
 
   topLeft = 0.0F;
@@ -54,6 +63,15 @@ void FlexRectangle::CornerRadii::fromQVariantList(const QVariantList& list) {
   }
 }
 
+/**
+ * @brief Clamps corner radii to valid values.
+ *
+ * Ensures each radius is non-negative and does not exceed half the minimum
+ * of the rectangle's width and height to prevent invalid geometry.
+ *
+ * @param width The width of the rectangle.
+ * @param height The height of the rectangle.
+ */
 void FlexRectangle::CornerRadii::clampRadius(const float& width,
                                              const float& height) {
   float maxRadius = qMin(width / 2, height / 2);
@@ -66,8 +84,14 @@ void FlexRectangle::CornerRadii::clampRadius(const float& width,
 
 // ###################################################################################
 
+/**
+ * @brief Constructs a FlexRectangle with default properties.
+ */
 FlexRectangle::FlexRectangle() { this->setFlag(ItemHasContents, true); }
 
+/**
+ * @brief Sets the fill color of the rectangle.
+ */
 void FlexRectangle::setColor(const QColor& color) {
   if (m_color == color) {
     return;
@@ -77,6 +101,9 @@ void FlexRectangle::setColor(const QColor& color) {
   update();
 }
 
+/**
+ * @brief Sets the corner radii of the rectangle.
+ */
 void FlexRectangle::setRadius(const QVariantList& radius) {
   if (m_radius == radius) {
     return;
@@ -92,6 +119,9 @@ void FlexRectangle::setRadius(const QVariantList& radius) {
   update();
 }
 
+/**
+ * @brief Sets the number of segments for corner arcs.
+ */
 void FlexRectangle::setSegments(uint32_t newSegments) {
   if (m_segments == newSegments) {
     return;
@@ -102,6 +132,9 @@ void FlexRectangle::setSegments(uint32_t newSegments) {
   update();
 }
 
+/**
+ * @brief Updates the scene graph node for rendering.
+ */
 QSGNode* FlexRectangle::updatePaintNode(QSGNode* oldNode,
                                         UpdatePaintNodeData* data) {
   Q_UNUSED(data)
@@ -145,6 +178,52 @@ QSGNode* FlexRectangle::updatePaintNode(QSGNode* oldNode,
   return node;
 }
 
+/**
+ * @brief Handles geometry changes to trigger redraws.
+ */
+void FlexRectangle::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) {
+  if (newGeometry.size() != oldGeometry.size()) {
+    m_geometryDirty = true;
+    update();
+  }
+  QQuickItem::geometryChange(newGeometry, oldGeometry);
+}
+
+/**
+ * @brief Generates the geometry for a rounded rectangle.
+ *
+ * This function creates a QSGGeometry object representing a rounded rectangle using
+ * a triangle strip drawing mode. The rectangle is constructed by generating vertices
+ * for each corner arc (if the radius is non-zero) and connecting them to form a closed
+ * shape. The process is as follows:
+ *
+ * 1. **Vertex Generation**:
+ *    - For each corner (top-left, top-right, bottom-right, bottom-left), generate
+ *      `m_segments + 1` vertices along a 90-degree arc if the corner radius is non-zero.
+ *    - Each arc is approximated using a series of points calculated with trigonometric
+ *      functions (cos and sin) to form a smooth curve.
+ *    - The center of the rectangle (width/2, height/2) is used as the starting vertex
+ *      for each triangle strip segment to ensure the shape is filled correctly.
+ *    - Vertices are generated in a clockwise order starting from the top-left corner.
+ *
+ * 2. **Arc Calculation**:
+ *    - For each corner, the angle `alpha` ranges from 0 to π/2 (90 degrees) in increments
+ *      of π/2 / m_segments.
+ *    - The x and y coordinates are calculated using the corner radius and trigonometric
+ *      functions, offset to position the arc correctly relative to the corner.
+ *
+ * 3. **Closing the Shape**:
+ *    - If the vertex list contains more than two vertices, the first vertex after the
+ *      initial center point is appended to close the triangle strip loop.
+ *
+ * 4. **Geometry Creation**:
+ *    - A QSGGeometry object is created with the calculated number of vertices.
+ *    - The drawing mode is set to QSGGeometry::DrawTriangleStrip to render the shape.
+ *    - The vertex data is copied into the geometry object.
+ *
+ * @param radii The CornerRadii structure containing the radius for each corner.
+ * @return A QSGGeometry object containing the vertex data for the rounded rectangle.
+ */
 QSGGeometry* FlexRectangle::generateGeometry(const CornerRadii& radii) const {
   using Point2D = QSGGeometry::Point2D;
 

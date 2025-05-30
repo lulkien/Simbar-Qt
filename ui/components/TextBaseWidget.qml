@@ -1,4 +1,4 @@
-pragma ComponentBehavior: Bound
+pragma ComponentBehavior
 
 import QtQuick
 import QtQuick.Layouts
@@ -6,30 +6,23 @@ import Simbar
 
 RowLayout {
     id: root
-    property double widgetHeight: Global.Size.defaultBoxSize
+    property double widgetHeight: SimbarConfig.qmlDefaultBoxSize
 
-    property double iconBoxWidth: Global.Size.defaultBoxSize
-    property string iconBoxColor: Global.Color.primary
+    property double iconBoxWidth: SimbarConfig.qmlDefaultBoxSize
+    property color iconBoxColor: SimbarConfig.themeBlue
     property string iconText: ""
-    property string iconTextColor: Global.Theme.base
+    property string iconTextColor: SimbarConfig.themeBase
 
-    property double contentPaddingLeft: Global.Size.defaultContentPadding
-    property double contentPaddingRight: Global.Size.defaultContentPadding
-    property string contentBoxColor: Global.Theme.base
+    property double contentPaddingLeft: SimbarConfig.qmlDefaultPadding
+    property double contentPaddingRight: SimbarConfig.qmlDefaultPadding
+    property string contentBoxColor: SimbarConfig.themeSurface0
     property string contentText: ""
-    property string contentTextColor: Global.Theme.base
+    property string contentTextColor: iconBoxColor
 
     property bool clickable: false
-    signal clicked()
+    signal clicked
 
     spacing: 0
-
-    Behavior on implicitWidth {
-        NumberAnimation {
-            duration: 500 // Duration of the animation in milliseconds
-            easing.type: Easing.InOutQuad // Easing function for smooth transition
-        }
-    }
 
     FlexRectangle {
         id: iconBox
@@ -58,19 +51,18 @@ RowLayout {
     FlexRectangle {
         id: contentBox
         Layout.fillWidth: true
-        Layout.minimumWidth: root.contentPaddingLeft + content.implicitWidth + root.contentPaddingRight
+        Layout.minimumWidth: root.contentPaddingLeft + content.implicitWidth
+                             + root.contentPaddingRight
         Layout.preferredHeight: root.widgetHeight
         radius: [0, 8, 8, 0]
         color: root.contentBoxColor
         visible: root.contentText !== ""
-
 
         BaseText {
             id: content
             anchors.left: contentBox.left
             anchors.leftMargin: root.contentPaddingLeft
             anchors.verticalCenter: contentBox.verticalCenter
-
 
             font.pixelSize: Global.Size.defaultContentFontSize
             font.bold: true
@@ -85,6 +77,12 @@ RowLayout {
                 root.clicked()
             }
         }
-    }
 
+        Behavior on implicitWidth {
+            NumberAnimation {
+                duration: 500 // Duration of the animation in milliseconds
+                easing.type: Easing.InOutQuad // Easing function for smooth transition
+            }
+        }
+    }
 }

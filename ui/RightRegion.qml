@@ -8,22 +8,18 @@ Row {
     TextBaseWidget {
         id: bluetooth
         iconText: "󰂲"
-        iconBoxColor: Global.Theme.red
+        // iconBoxColor: Global.Theme.red
         contentTextColor: iconBoxColor
     }
 
     TextBaseWidget {
         id: wifi
         iconText: "󰖩"
-        iconBoxColor: Global.Theme.green
-        contentTextColor: iconBoxColor
         contentText: "OpenWrt_Home"
         clickable: true
         onClicked: {
-            contentText =  contentText !== "" ? "" : "OpenWrt_Home"
+            contentText = contentText !== "" ? "" : "OpenWrt_Home"
         }
-
-
     }
 
     TextBaseWidget {
@@ -39,7 +35,8 @@ Row {
             running: true
             repeat: true
             onTriggered: {
-                dateTime.contentText = Qt.formatDateTime(new Date(), "ddd MMM dd | hh:mm AP")
+                dateTime.contentText = Qt.formatDateTime(
+                            new Date(), "ddd MMM dd | hh:mm AP")
             }
         }
     }

@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 4.0)
 
+set(CMAKE_GENERATOR
+    "Ninja"
+    CACHE INTERNAL "")
+
+set(CMAKE_MAKE_PROGRAM "ninja")
+
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 
@@ -57,7 +63,8 @@ qt_add_qml_module(
   ui/Main.qml
   ui/components/BaseText.qml
   ui/components/TextBaseWidget.qml
-  ui/RightRegion.qml)
+  ui/RightRegion.qml
+  ui/components/AnimatedText.qml)
 
 target_include_directories(
   simbar

@@ -3,8 +3,8 @@ import Simbar
 
 Item {
     id: root
-    width: Global.Size.barWidth
-    height: Global.Size.barHeight
+    width: SimbarConfig.qmlWidth
+    height: SimbarConfig.qmlHeight
 
     Rectangle {
         anchors.fill: parent
@@ -16,6 +16,5 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 10
-
     }
 }

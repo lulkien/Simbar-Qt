@@ -21,10 +21,13 @@ void ApplicationEngine::initialize() {
 
   // Create layershell for window
   m_layerShell->setLayer(LayerShellQt::Window::LayerBottom);
+
   m_layerShell->setAnchors(LayerShellQt::Window::AnchorTop);
+
   m_layerShell->setKeyboardInteractivity(
       LayerShellQt::Window::KeyboardInteractivityNone);
-  m_layerShell->setExclusiveZone(BAR_HEIGHT);
+
+  m_layerShell->setExclusiveZone(CONFIG.height());
 
   qDebug() << "Expose C++ QObject to QML";
   m_view.rootContext()->setContextProperty("btModel",
@@ -38,7 +41,9 @@ void ApplicationEngine::initialize() {
 void ApplicationEngine::setupView() {
   qDebug() << "Setup view from module";
   m_view.loadFromModule("Simbar", "Main");
-  m_view.setGeometry(BAR_X_POSITION, BAR_Y_POSITION, BAR_WIDTH, BAR_HEIGHT);
+  m_view.setGeometry((CONFIG.width() - CONFIG.qmlWidth()) / 2,
+                     (CONFIG.height() - CONFIG.qmlHeight()) / 2, CONFIG.width(),
+                     CONFIG.height());
 }
 
 void ApplicationEngine::showView() {
@@ -48,4 +53,19 @@ void ApplicationEngine::showView() {
   }
 
   m_view.show();
+}
+
+// ####################### Config implementation #######################
+
+Config::Config() {
+  QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+}
+
+Config& Config::instance() {
+  static Config self;
+  return self;
+}
+
+Config* Config::create(QQmlEngine* /*unused*/, QJSEngine* /*unused*/) {
+  return &instance();
 }

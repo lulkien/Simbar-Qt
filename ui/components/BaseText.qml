@@ -3,6 +3,6 @@ import Simbar
 
 Text {
     id: root
-    font.family: Global.Font.family
-    color: Global.Color.text
+    font.family: SimbarConfig.qmlDefaultFontFamily
+    color: SimbarConfig.themeText
 }

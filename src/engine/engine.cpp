@@ -1,16 +1,16 @@
 #include "engine.h"
+#include "appview.h"
 #include "config.h"
+#include "mocha.h"
 #include "theme.h"
 
-#include <exception>
 #include <qdebug.h>
 #include <qlogging.h>
 #include <qqmlcontext.h>
-
-#include <LayerShellQt/window.h>
+#include <qquickview.h>
 #include <qtmetamacros.h>
 
-#include "mocha.h"
+#include <LayerShellQt/window.h>
 
 ApplicationEngine::ApplicationEngine() = default;
 
@@ -20,44 +20,40 @@ void ApplicationEngine::initialize() {
   qDebug() << "Load theme: Mocha";
   CONFIG.loadTheme(CATPUCCIN_MOCHA);
 
-  qDebug() << "Initialize layer shell";
-
-  m_layerShell = LayerShellQt::Window::get(&m_view);
-
-  // Create layershell for window
-  m_layerShell->setLayer(LayerShellQt::Window::LayerBottom);
-
-  m_layerShell->setAnchors(LayerShellQt::Window::AnchorTop);
-
-  m_layerShell->setKeyboardInteractivity(
-      LayerShellQt::Window::KeyboardInteractivityNone);
-
-  m_layerShell->setExclusiveZone(CONFIG.height());
-
-  qDebug() << "Expose C++ QObject to QML";
-  m_view.rootContext()->setContextProperty("btModel",
-                                           m_btController.getModel().get());
-
-  QSurfaceFormat format = m_view.format();
-  format.setSamples(CONFIG.renderSample());
-  m_view.setFormat(format);
-}
-
-void ApplicationEngine::setupView() {
-  qDebug() << "Setup view from module";
-  m_view.loadFromModule("Simbar", "Main");
-  m_view.setGeometry((CONFIG.width() - CONFIG.qmlWidth()) / 2,
-                     (CONFIG.height() - CONFIG.qmlHeight()) / 2, CONFIG.width(),
-                     CONFIG.height());
+  createMainBar();
 }
 
 void ApplicationEngine::showView() {
-
-  if (nullptr == m_layerShell) {
-    throw std::exception();
+  for (const auto& viewName : m_viewMap.keys()) {
+    const auto& appView = m_viewMap.value(viewName);
+    if (appView->autoShow()) {
+      appView->asView().show();
+    }
   }
+}
 
-  m_view.show();
+void ApplicationEngine::createMainBar() {
+  qDebug() << "Setup: MainBar";
+  auto mainView = ApplicationView::Builder()
+                      .withName("MainBar")
+                      .withSample(CONFIG.renderSample())
+                      .withAnchor(LayerShellQt::Window::AnchorTop)
+                      .withLayer(LayerShellQt::Window::LayerBottom)
+                      .withExclusiveZone(CONFIG.height())
+                      .withWidth(CONFIG.width())
+                      .withHeight(CONFIG.height())
+                      .withPositionX(0)
+                      .withPositionY(0)
+                      .withShowByDefault(true)
+                      .create();
+
+  qDebug() << "Set context properties for MainBar";
+  mainView->asView().rootContext()->setContextProperty(
+      "btModel", m_btController.getModel().get());
+
+  mainView->asView().loadFromModule("Simbar", "Main");
+
+  m_viewMap.insert(mainView->name(), mainView);
 }
 
 // ####################### Config implementation #######################

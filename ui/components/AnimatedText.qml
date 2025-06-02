@@ -84,4 +84,8 @@ BaseText {
 
         textUpdateTimer.start()
     }
+
+    function instantUpdateText(newText) {
+        root.text = newText
+    }
 }

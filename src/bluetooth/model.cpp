@@ -1,9 +1,12 @@
 #include "bluetooth/model.h"
 #include <qobject.h>
+#include <qqmlengine.h>
 
 namespace Bluetooth {
 
-Model::Model(QObject* parent) : QObject(parent) {}
+Model::Model(QObject* parent) : QObject(parent) {
+  QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+}
 
 Model::~Model() = default;
 

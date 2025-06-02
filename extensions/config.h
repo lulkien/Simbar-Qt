@@ -69,7 +69,10 @@ class Config final : public QObject {
 
   DEFINE_CONST_PROPERTY(int32_t, qmlDefaultBoxSize, 35)
   DEFINE_CONST_PROPERTY(int32_t, qmlDefaultPadding, 8)
-  DEFINE_CONST_PROPERTY(int32_t, qmlDefaultFontsize, 16)
+  DEFINE_CONST_PROPERTY(int32_t, qmlDefaultIconSize, 28)
+  DEFINE_CONST_PROPERTY(int32_t, qmlDefaultFontSize, 16)
+  DEFINE_CONST_PROPERTY(QString, qmlDefaultFontFamily,
+                        QString("CodeNewRoman Nerd Font Mono"))
 
 public:
   static Config& instance();

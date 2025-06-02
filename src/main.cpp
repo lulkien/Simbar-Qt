@@ -11,7 +11,6 @@ int main(int argc, char* argv[]) {
   ApplicationEngine engine;
 
   engine.initialize();
-  engine.setupView();
   engine.showView();
 
   return QGuiApplication::exec();

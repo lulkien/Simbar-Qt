@@ -8,26 +8,28 @@ Row {
     TextBaseWidget {
         id: bluetooth
         iconText: "󰂲"
-        // iconBoxColor: Global.Theme.red
+        iconBoxColor: SimbarConfig.themeRed
         contentTextColor: iconBoxColor
     }
 
     TextBaseWidget {
         id: wifi
         iconText: "󰖩"
-        contentText: "OpenWrt_Home"
         clickable: true
+        iconBoxColor: contentText === "" ? SimbarConfig.themeRed : SimbarConfig.themeGreen
         onClicked: {
-            contentText = contentText !== "" ? "" : "OpenWrt_Home"
+            wifi.updateText(contentText !== "" ? "" : "OpenWrt_Home");
+        }
+
+        Component.onCompleted: {
+            wifi.instantUpdateText("OpenWrt_Home");
         }
     }
 
     TextBaseWidget {
         id: dateTime
         iconText: "󰸗"
-        iconBoxColor: Global.Theme.mauve
-        contentTextColor: iconBoxColor
-        contentText: Qt.formatDateTime(new Date(), "ddd MMM dd | hh:mm AP")
+        iconBoxColor: SimbarConfig.themeMauve
         contentPaddingRight: 10
 
         Timer {
@@ -35,9 +37,12 @@ Row {
             running: true
             repeat: true
             onTriggered: {
-                dateTime.contentText = Qt.formatDateTime(
-                            new Date(), "ddd MMM dd | hh:mm AP")
+                dateTime.instantUpdateText(Qt.formatDateTime(new Date(), "ddd MMM dd | hh:mm AP"));
             }
+        }
+
+        Component.onCompleted: {
+            dateTime.instantUpdateText(Qt.formatDateTime(new Date(), "ddd MMM dd | hh:mm AP"));
         }
     }
 }

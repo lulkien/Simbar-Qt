@@ -8,7 +8,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Global.Color.background
+        color: SimbarConfig.themeCrust
     }
 
     RightRegion {

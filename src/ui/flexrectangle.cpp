@@ -151,32 +151,59 @@ QSGNode* FlexRectangle::updatePaintNode(QSGNode* oldNode,
   }
 
   auto* node = static_cast<QSGGeometryNode*>(oldNode);
-  if ((node == nullptr) || m_geometryDirty) {
-    delete node;
-    node = new QSGGeometryNode;
 
+  if (node == nullptr) {
+    node = new QSGGeometryNode;
+    node->setFlag(QSGNode::OwnsGeometry);
+    node->setFlag(QSGNode::OwnsMaterial);
+
+    auto* material = new QSGFlatColorMaterial;
+    material->setColor(m_color);
+    node->setMaterial(material);
+  }
+
+  // Check if geometry needs update (shape changed or first creation)
+  if (node->geometry() == nullptr || m_geometryDirty) {
     CornerRadii radii;
     radii.fromQVariantList(m_radius);
     radii.clampRadius(width, height);
 
     auto* geometry = generateGeometry(radii);
-
     node->setGeometry(geometry);
-    node->setFlag(QSGNode::OwnsGeometry);
-
-    auto* material = new QSGFlatColorMaterial;
-    material->setColor(m_color);
-    node->setMaterial(material);
-    node->setFlag(QSGNode::OwnsMaterial);
-
     m_geometryDirty = false;
-  } else {
-    auto* material = static_cast<QSGFlatColorMaterial*>(node->material());
-    if (material->color() != m_color) {
-      material->setColor(m_color);
-      node->markDirty(QSGNode::DirtyMaterial);
-    }
   }
+
+  // Check if color changed
+  auto* material = static_cast<QSGFlatColorMaterial*>(node->material());
+  if (material->color() != m_color) {
+    material->setColor(m_color);
+    node->markDirty(QSGNode::DirtyMaterial);
+  }
+
+  // if ((node == nullptr) || m_geometryDirty) {
+  //
+  //   CornerRadii radii;
+  //   radii.fromQVariantList(m_radius);
+  //   radii.clampRadius(width, height);
+  //
+  //   auto* geometry = generateGeometry(radii);
+  //
+  //   node->setGeometry(geometry);
+  //   node->setFlag(QSGNode::OwnsGeometry);
+  //
+  //   auto* material = new QSGFlatColorMaterial;
+  //   material->setColor(m_color);
+  //   node->setMaterial(material);
+  //   node->setFlag(QSGNode::OwnsMaterial);
+  //
+  //   m_geometryDirty = false;
+  // } else {
+  //   auto* material = static_cast<QSGFlatColorMaterial*>(node->material());
+  //   if (material->color() != m_color) {
+  //     material->setColor(m_color);
+  //     node->markDirty(QSGNode::DirtyMaterial);
+  //   }
+  // }
 
   return node;
 }

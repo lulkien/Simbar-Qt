@@ -1,8 +1,10 @@
 #pragma once
 
-#include "src/bluetooth/controller.h"
 #include <LayerShellQt/window.h>
 #include <qquickview.h>
+
+#include "appview.h"
+#include "src/bluetooth/controller.h"
 
 class ApplicationEngine {
 public:
@@ -10,12 +12,16 @@ public:
   virtual ~ApplicationEngine();
 
   void initialize();
-  void setupView();
   void showView();
 
 private:
+  // Add and implement your functions here to create more views
+  // Then put them in initialize()
+  // ----------------------------------------------
+  void createMainBar();
+  // ----------------------------------------------
+
   BluetoothController m_btController;
 
-  QQuickView m_view;
-  LayerShellQt::Window* m_layerShell = nullptr;
+  QHash<QString, ApplicationViewPtr> m_viewMap;
 };

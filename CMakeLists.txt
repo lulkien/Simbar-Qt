@@ -40,8 +40,13 @@ qt_policy(SET QTP0001 NEW)
 qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(
-  simbar src/main.cpp src/engine/engine.cpp src/bluetooth/controller.cpp
-  src/bluetooth/model.cpp src/ui/flexrectangle.cpp)
+  simbar
+  src/main.cpp
+  src/engine/engine.cpp
+  src/bluetooth/controller.cpp
+  src/bluetooth/model.cpp
+  src/view/appview.cpp
+  src/ui/flexrectangle.cpp)
 
 qt_add_qml_module(
   simbar
@@ -57,14 +62,14 @@ qt_add_qml_module(
   src/bluetooth/common.h
   src/bluetooth/controller.h
   src/bluetooth/model.h
+  src/view/appview.h
   src/ui/flexrectangle.h
   QML_FILES
-  extensions/Global.js
   ui/Main.qml
   ui/components/BaseText.qml
   ui/components/TextBaseWidget.qml
-  ui/RightRegion.qml
-  ui/components/AnimatedText.qml)
+  ui/components/AnimatedText.qml
+  ui/RightRegion.qml)
 
 target_include_directories(
   simbar
@@ -72,6 +77,7 @@ target_include_directories(
           ${CMAKE_CURRENT_SOURCE_DIR}/extensions
           ${CMAKE_CURRENT_SOURCE_DIR}/src/engine
           ${CMAKE_CURRENT_SOURCE_DIR}/src/bluetooth
+          ${CMAKE_CURRENT_SOURCE_DIR}/src/view
           ${CMAKE_CURRENT_SOURCE_DIR}/src/ui)
 
 target_link_libraries(simbar PRIVATE LayerShellQtInterface Qt6::Core Qt6::Qml
